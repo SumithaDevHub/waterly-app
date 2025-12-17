@@ -42,6 +42,8 @@ Waterly promotes **mindful hydration**, encouraging consistency without pressure
 
 ---
 
+Live at : https://sumithadevhub.github.io/waterly-app
+
 ## ⚠️ Trial Version Notice
 
 Waterly is currently a **trial build** created for learning, experimentation, and feedback.  
