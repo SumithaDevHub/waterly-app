@@ -25,7 +25,7 @@ Once downloaded, allow **Install from Unknown Sources** on Android.
 
 ## 🩺 Author’s Note
 
-**Swethavarsa Kathiresh Krishnan** — 🩺 Sethascope  
+**Swethavarsa Kathiresh Krishnan** — 🩺 
 BNYS • Currently pursuing student
 
 From a holistic health perspective, adequate water intake supports digestion, circulation, detoxification, and cellular balance.  
