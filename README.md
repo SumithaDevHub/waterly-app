@@ -1,50 +1,48 @@
-# Welcome to your Expo app 👋
+# Waterly 💧
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A calm, mindful hydration companion designed to help users build sustainable daily water-drinking habits.
 
-## Get started
+Waterly resets intake every day so users focus only on **today**, without guilt or clutter.
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## 📱 Download (Android – Trial Version)
 
-2. Start the app
+➡️ Download the APK directly from the website  
+Once downloaded, allow **Install from Unknown Sources** on Android.
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## ✨ Features
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Daily water intake tracking
+- Automatic daily reset
+- Offline-first (no login required)
+- Clean, calming UI
+- History view by date
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## 🩺 Author’s Note
 
-When you're ready, run:
+**Swethavarsa Kathiresh Krishnan** — 🩺 Sethascope  
+BNYS • Currently pursuing student
 
-```bash
-npm run reset-project
-```
+From a holistic health perspective, adequate water intake supports digestion, circulation, detoxification, and cellular balance.  
+Waterly promotes **mindful hydration**, encouraging consistency without pressure — a key principle for long-term well-being.
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-## Learn more
+## 🚧 Future Improvements
 
-To learn more about developing your project with Expo, look at the following resources:
+- Smart hydration reminders
+- XP, streaks & levels
+- Weekly & monthly analytics
+- Personalized hydration insights
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+---
 
-## Join the community
+## ⚠️ Trial Version Notice
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Waterly is currently a **trial build** created for learning, experimentation, and feedback.  
+Features and design may evolve over time.

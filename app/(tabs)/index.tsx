@@ -1,98 +1,215 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { useEffect, useRef, useState } from "react";
+import {
+  Animated,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { Bottle } from "../../components/Bottle";
+import { MlSlider } from "../../components/MlSlider";
+import {
+  addLog,
+  checkAndResetDay,
+  getDailyGoal,
+  getToday,
+  getWaterLogs,
+  saveDailyGoal,
+} from "../../src/storage/waterStorage";
+
+const BOTTLE_HEIGHT = 280;
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const [dailyGoal, setDailyGoal] = useState<number | null>(null);
+  const [goalInput, setGoalInput] = useState("");
+  const [intake, setIntake] = useState(0);
+  const [selectedMl, setSelectedMl] = useState(250);
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  const animatedHeight = useRef(new Animated.Value(0)).current;
+
+  /* ---------- LOAD + DAILY RESET ---------- */
+  useEffect(() => {
+    async function load() {
+      const goal = await getDailyGoal();
+      if (goal) setDailyGoal(goal);
+
+      const isNewDay = await checkAndResetDay();
+
+      if (isNewDay) {
+        setIntake(0);
+        return;
+      }
+
+      const logs = await getWaterLogs();
+      const today = getToday();
+
+      const todayIntake = logs
+        .filter((l) => l.date === today)
+        .reduce((sum, l) => sum + l.amount, 0);
+
+      setIntake(todayIntake);
+    }
+
+    load();
+  }, []);
+
+  /* ---------- BOTTLE ANIMATION ---------- */
+  useEffect(() => {
+    if (!dailyGoal) return;
+
+    Animated.timing(animatedHeight, {
+      toValue: Math.min(intake / dailyGoal, 1) * BOTTLE_HEIGHT,
+      duration: 700,
+      useNativeDriver: false,
+    }).start();
+  }, [intake, dailyGoal]);
+
+  async function handleSetGoal() {
+    const value = Number(goalInput);
+    if (!value || value < 500) return;
+
+    setDailyGoal(value);
+    await saveDailyGoal(value);
+  }
+
+  async function handleDrink() {
+    const today = getToday();
+
+    setIntake((prev) => prev + selectedMl);
+
+    await addLog({
+      id: Date.now().toString(),
+      amount: selectedMl,
+      timestamp: new Date().toISOString(),
+      date: today,
+    });
+  }
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Waterly 💧</Text>
+        <Text style={styles.subtitle}>Calm hydration, daily</Text>
+      </View>
+
+      {!dailyGoal ? (
+        <View style={styles.goalBox}>
+          <TextInput
+            placeholder="Set daily goal (ml)"
+            placeholderTextColor="#64748b"
+            value={goalInput}
+            onChangeText={setGoalInput}
+            keyboardType="numeric"
+            style={styles.input}
+          />
+          <Pressable style={styles.primaryButton} onPress={handleSetGoal}>
+            <Text style={styles.primaryButtonText}>Start</Text>
+          </Pressable>
+        </View>
+      ) : (
+        <>
+          <View style={styles.main}>
+            <View style={styles.bottleArea}>
+              <Bottle animatedHeight={animatedHeight} />
+            </View>
+
+            <Text style={styles.progress}>
+              {intake} / {dailyGoal} ml
+            </Text>
+          </View>
+
+          <View style={styles.controls}>
+            <MlSlider value={selectedMl} onChange={setSelectedMl} />
+
+            <Pressable style={styles.primaryButton} onPress={handleDrink}>
+              <Text style={styles.primaryButtonText}>
+                I drank {selectedMl} ml
+              </Text>
+            </Pressable>
+          </View>
+        </>
+      )}
+    </View>
   );
 }
 
+/* ---------- STYLES ---------- */
+
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    backgroundColor: "#020617",
+    paddingHorizontal: 24,
+    paddingTop: 56,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+
+  header: {
+    alignItems: "center",
+    marginBottom: 24,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+
+  title: {
+    fontSize: 32,
+    fontWeight: "800",
+    color: "#e0f2fe",
+  },
+
+  subtitle: {
+    marginTop: 6,
+    fontSize: 14,
+    color: "#7dd3fc",
+  },
+
+  goalBox: {
+    marginTop: 40,
+  },
+
+  input: {
+    borderWidth: 1,
+    borderColor: "#38bdf8",
+    borderRadius: 16,
+    padding: 16,
+    color: "#e0f2fe",
+    marginBottom: 14,
+    textAlign: "center",
+    fontSize: 16,
+  },
+
+  main: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  bottleArea: {
+    height: BOTTLE_HEIGHT + 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  progress: {
+    marginTop: 14,
+    color: "#cbd5f5",
+    fontSize: 16,
+  },
+
+  controls: {
+    paddingBottom: 28,
+  },
+
+  primaryButton: {
+    backgroundColor: "#38bdf8",
+    paddingVertical: 18,
+    borderRadius: 20,
+    marginTop: 18,
+  },
+
+  primaryButtonText: {
+    color: "#020617",
+    fontSize: 18,
+    fontWeight: "700",
+    textAlign: "center",
   },
 });

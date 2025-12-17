@@ -1,0 +1,176 @@
+Thought for 2s# Software Requirements Specification (SRS)
+
+## HydroQuest - Gamified Water Intake Tracker
+
+### 1. Introduction
+
+#### 1.1 Purpose
+
+This document specifies the functional and non-functional requirements for HydroQuest, a gamified water intake tracking application designed to motivate users to maintain proper hydration through game mechanics.
+
+#### 1.2 Scope
+
+HydroQuest is a progressive web application that allows users to track their daily water intake, earn achievements, maintain streaks, and progress through levels. The application operates entirely client-side with local data persistence.
+
+#### 1.3 Definitions
+
+- **XP**: Experience Points earned through water intake
+- **Streak**: Consecutive days meeting the daily water goal
+- **Level**: User progression tier based on accumulated XP
+- **Daily Goal**: Target water intake set at 2000ml per day
+
+
+### 2. Functional Requirements
+
+#### 2.1 Water Intake Tracking
+
+- **FR-1.1**: Users shall be able to log water intake in predefined increments (250ml, 500ml, 750ml, 1000ml)
+- **FR-1.2**: System shall display current daily intake in milliliters
+- **FR-1.3**: System shall show visual progress toward daily goal using animated fill indicator
+- **FR-1.4**: System shall display percentage of daily goal achieved
+- **FR-1.5**: System shall reset daily intake at midnight local time
+
+
+#### 2.2 Gamification System
+
+- **FR-2.1**: Users shall earn 10 XP for every 250ml of water logged
+- **FR-2.2**: System shall track total XP accumulated across all time
+- **FR-2.3**: System shall calculate user level based on formula: Level = floor(Total XP / 100)
+- **FR-2.4**: System shall display current level and progress to next level
+- **FR-2.5**: System shall maintain a streak counter for consecutive days meeting daily goal
+- **FR-2.6**: System shall reset streak to 0 if daily goal is not met
+
+
+#### 2.3 Achievements System
+
+- **FR-3.1**: System shall award "First Drop" achievement after logging first water intake
+- **FR-3.2**: System shall award "Daily Goal" achievement after reaching 2000ml in one day
+- **FR-3.3**: System shall award "3-Day Streak" achievement after maintaining 3 consecutive days
+- **FR-3.4**: System shall award "Week Warrior" achievement after maintaining 7 consecutive days
+- **FR-3.5**: System shall award "Hydration Hero" achievement after reaching level 5
+- **FR-3.6**: System shall award "Getting Started" achievement after logging 5L total
+- **FR-3.7**: System shall award "Well Hydrated" achievement after logging 50L total
+- **FR-3.8**: System shall award "Waterfall" achievement after logging 1L in single session
+- **FR-3.9**: Achievements shall only be awarded once and persist permanently
+- **FR-3.10**: System shall display locked achievements with lock icon and unlock requirements
+
+
+#### 2.4 Statistics Dashboard
+
+- **FR-4.1**: System shall calculate and display average daily intake
+- **FR-4.2**: System shall display best streak achieved
+- **FR-4.3**: System shall display total water consumed across all time
+- **FR-4.4**: System shall display total days tracked
+- **FR-4.5**: System shall provide hydration insights based on time of day (morning, afternoon, evening)
+
+
+### 3. Non-Functional Requirements
+
+#### 3.1 Performance
+
+- **NFR-1.1**: Application shall load initial view within 2 seconds on standard broadband connection
+- **NFR-1.2**: Water logging action shall provide immediate visual feedback (< 100ms)
+- **NFR-1.3**: Animations shall run at 60fps for smooth user experience
+
+
+#### 3.2 Usability
+
+- **NFR-2.1**: Interface shall be intuitive requiring no training or documentation
+- **NFR-2.2**: Primary actions (logging water) shall be accessible within one tap
+- **NFR-2.3**: Visual feedback shall confirm all user actions
+- **NFR-2.4**: Color contrast shall meet WCAG 2.1 AA standards for accessibility
+
+
+#### 3.3 Data Persistence
+
+- **NFR-3.1**: All user data shall persist in browser localStorage
+- **NFR-3.2**: Data shall survive browser restarts and page refreshes
+- **NFR-3.3**: System shall gracefully handle corrupted localStorage data
+
+
+#### 3.4 Compatibility
+
+- **NFR-4.1**: Application shall function on modern browsers (Chrome, Firefox, Safari, Edge - latest 2 versions)
+- **NFR-4.2**: Application shall be responsive for screen sizes 320px to 2560px wide
+- **NFR-4.3**: Application shall support both light and dark color schemes
+
+
+### 4. System Features
+
+#### 4.1 User Interface Components
+
+- Main dashboard with water glass visualization
+- Quick-add intake buttons
+- Level progress bar with XP display
+- Statistics cards showing key metrics
+- Achievements grid with unlock status
+- Streak indicator with flame icon
+
+
+#### 4.2 Data Model
+
+```typescript
+interface DailyLog {
+  date: string;
+  amount: number;
+  goal: number;
+}
+
+interface UserProgress {
+  totalIntake: number;
+  totalXP: number;
+  level: number;
+  currentStreak: number;
+  bestStreak: number;
+  achievements: string[];
+  dailyLogs: DailyLog[];
+}
+```
+
+### 5. Technical Specifications
+
+#### 5.1 Technology Stack
+
+- **Framework**: Next.js 16 with React 19
+- **Styling**: Tailwind CSS v4
+- **Icons**: Lucide React
+- **Language**: TypeScript
+- **Storage**: Browser localStorage API
+
+
+#### 5.2 Browser Requirements
+
+- localStorage API support
+- ES6+ JavaScript support
+- CSS Grid and Flexbox support
+- SVG rendering capability
+
+
+### 6. Constraints and Assumptions
+
+#### 6.1 Constraints
+
+- No backend server or database
+- No user authentication or multi-device sync
+- Data limited to single browser/device
+- No offline notification capabilities
+
+
+#### 6.2 Assumptions
+
+- Users have modern web browsers with JavaScript enabled
+- Users access application from single device consistently
+- Users understand basic gamification concepts
+- Daily goal of 2000ml is appropriate for average adults
+
+
+### 7. Future Enhancements (Out of Scope)
+
+- User authentication and cloud sync
+- Custom daily goals based on body weight
+- Reminder notifications
+- Social features and leaderboards
+- Integration with fitness trackers
+- Historical data visualization with charts
+- Export data functionality
+- Multiple drink types (coffee, tea, etc.)
